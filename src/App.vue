@@ -1,18 +1,26 @@
 <template>
   <div id="app">
     <h1>What Are The Odds?</h1>
-
-    <h2>
-      Odds are between 1 and <input v-model="topNumber" type="number" min="1" />
-    </h2>
-    <p>
+    <form action="" v-on:click.prevent="">
+      <h2>
+        Odds are between 1 and
+        <input v-model="topNumber" type="number" min="1" />
+      </h2>
       <button id="roll" v-show="topNumber" v-on:click.prevent="roll()">
-        <img src="./assets/dice.png" alt="" />
+        <img src="./assets/dice.png" alt="" /> Roll That Shit!
       </button>
-    </p>
+    </form>
+
     <p class="result" v-show="firstNumber">
       <span class="first">{{ firstNumber }}</span> /
       <span class="second">{{ secondNumber }}</span>
+    </p>
+
+    <p class="reload" v-show="firstNumber">
+      Roll Again?
+      <button v-on:click.prevent="reload()">
+        <img src="./assets/redo-alt.svg" alt="" /> Refresh
+      </button>
     </p>
 
     <p v-show="matches" class="matches">Numbers Match!</p>
@@ -35,6 +43,12 @@ export default {
     roll: function() {
       document.querySelector("#roll").style.display = "none";
       var top = this.topNumber;
+      var interval = setInterval(function() {
+        $("#number").text(number);
+        if (number >= target) clearInterval(interval);
+        number++;
+      }, 30);
+      for (var i = 0; i < top; i++) {}
       this.firstNumber = Math.floor(Math.random() * top + 1);
       this.secondNumber = Math.floor(Math.random() * top + 1);
 
@@ -50,6 +64,9 @@ export default {
         document.querySelector(".second").style.color = "red";
         document.querySelector(".second").style.fontWeight = "bold";
       }
+    },
+    reload: function() {
+      location.reload();
     }
   }
 };
@@ -60,6 +77,7 @@ body {
   margin: 0;
   padding: 0;
   background: #f9f9f9;
+  font-size: 18px;
 }
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
@@ -93,6 +111,13 @@ a {
   color: #42b983;
 }
 
+form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 input[type="number"] {
   background: transparent;
   border: none;
@@ -106,18 +131,22 @@ input[type="number"] {
 }
 
 button {
+  align-items: center;
   background-color: #fff;
   border-radius: 8px;
-  border: 2px solid #2c3e50;
-  color: #fff;
+  border: 2px solid #e0e0e0;
+  color: #2c3e50;
   cursor: pointer;
+  display: flex;
   font-size: 18px;
+  justify-content: space-around;
   min-height: 48px;
   padding: 1rem 2rem;
   transition: background-color 0.3s;
 
   img {
-    max-width: 150px;
+    max-width: 30px;
+    margin-right: 1rem;
   }
 
   &:hover {
@@ -143,5 +172,15 @@ button {
 .matches {
   font-size: 72px;
   color: red;
+}
+.reload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  button {
+    margin-top: 1rem;
+  }
 }
 </style>
