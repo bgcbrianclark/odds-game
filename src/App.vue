@@ -6,22 +6,17 @@
         Odds are between 1 and
         <input v-model="topNumber" type="number" min="1" />
       </h2>
-      <button id="roll" v-show="topNumber" v-on:click.prevent="roll()">
+
+      <button id="roll" v-show="topNumber" v-on:click.prevent="startCycle()">
         <img src="./assets/dice.png" alt="" /> Roll That Shit!
       </button>
+
     </form>
 
-    <p class="result" v-show="firstNumber">
-      <span class="first">{{ firstNumber }}</span> /
-      <span class="second">{{ secondNumber }}</span>
-    </p>
-
-    <p class="reload" v-show="firstNumber">
-      Roll Again?
-      <button v-on:click.prevent="reload()">
-        <img src="./assets/redo-alt.svg" alt="" /> Refresh
-      </button>
-    </p>
+    <div class="roller">
+      <span class="">{{ firstNumber ? firstNumber : 0 }} <button @click="firstRoller = false">Stop</button></span>
+      <span class="">{{ secondNumber ? secondNumber : 0 }} <button @click="secondRoller = false">Stop</button></span>
+    </div>
 
     <p v-show="matches" class="matches">Numbers Match!</p>
     <img v-show="matches" src="./assets/ohshit.gif" alt="" />
@@ -36,34 +31,41 @@ export default {
       topNumber: "",
       firstNumber: "",
       secondNumber: "",
-      matches: false
+      matches: false,
+      firstRoller: false,
+      secondRoller: false
     };
   },
   methods: {
-    roll: function() {
-      document.querySelector("#roll").style.display = "none";
-      var top = this.topNumber;
-      var interval = setInterval(function() {
-        $("#number").text(number);
-        if (number >= target) clearInterval(interval);
-        number++;
-      }, 30);
-      for (var i = 0; i < top; i++) {}
-      this.firstNumber = Math.floor(Math.random() * top + 1);
-      this.secondNumber = Math.floor(Math.random() * top + 1);
-
-      document.querySelector(".first").style.opacity = 1;
-      document.querySelector(".second").style.opacity = 1;
-      document.querySelector(".first").style.transform = "none";
-      document.querySelector(".second").style.transform = "none";
-
-      if (this.firstNumber == this.secondNumber) {
-        this.matches = true;
-        document.querySelector(".first").style.color = "red";
-        document.querySelector(".first").style.fontWeight = "bold";
-        document.querySelector(".second").style.color = "red";
-        document.querySelector(".second").style.fontWeight = "bold";
-      }
+    startCycle: function() {
+      let top = this.topNumber;
+      const self = this;
+      self.firstRoller = true;
+      self.secondRoller = true;
+      setInterval(function() {
+        if (self.firstRoller) {
+          self.firstNumber = Math.floor(Math.random() * self.topNumber + 1);
+        } else {
+          clearInterval(this);
+          if (!self.firstRoller && !self.secondRoller) {
+            if (self.firstNumber == self.secondNumber) {
+              self.matches = true;
+            }
+          }
+        }
+      }, 50);
+      setInterval(function() {
+        if (self.secondRoller) {
+          self.secondNumber = Math.floor(Math.random() * self.topNumber + 1);
+        } else {
+          clearInterval(this);
+          if (!self.firstRoller && !self.secondRoller) {
+            if (self.firstNumber == self.secondNumber) {
+              self.matches = true;
+            }
+          }
+        }
+      }, 50);
     },
     reload: function() {
       location.reload();
@@ -182,5 +184,29 @@ button {
   button {
     margin-top: 1rem;
   }
+}
+
+.roller {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-size: 2em;
+
+      &:first-child {
+        margin-right: 2rem;
+      }
+
+      button {
+        margin-top: 1rem;
+      }
+    }
 }
 </style>
